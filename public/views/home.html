@@ -1,0 +1,14 @@
+<div class="masthead">
+    <h1 class="text-muted">Castells de Cornella</h1>
+    <nav>
+        <ul class="nav nav-justified">
+            <li ng-class="{active: HomeCtrl.isState('home')}"><a ng-click="HomeCtrl.goTo('home')">Home</a></li>
+            <li ng-class="{active: HomeCtrl.isState('pinyas')}"><a ng-click="HomeCtrl.goTo('pinyas')">Pinyas</a></li>
+            <li ng-class="{active: HomeCtrl.isState('users')}"><a ng-click="HomeCtrl.goTo('users')">Users</a></li>
+            <li ng-class="{active: HomeCtrl.isState('about')}"><a ng-click="HomeCtrl.goTo('about')">About</a></li>
+            <li ng-class="{active: HomeCtrl.isState('contact')}"><a ng-click="HomeCtrl.goTo('contact')">Contact</a></li>
+        </ul>
+    </nav>
+</div>
+<div ui-view>
+</div>
