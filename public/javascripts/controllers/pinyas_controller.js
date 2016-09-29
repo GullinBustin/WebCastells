@@ -49,10 +49,19 @@ angular.module('Pinya')
 
         };
 
-        var drawName = function (ctx, pos, rot, name) {
+        var drawName = function (ctx, pos, size ,rot, name) {
 
             ctx.fillStyle="black";
-            ctx.fillText(name,pos[0], pos[1]);
+            var maxSize = Math.max(size[0] , size[1]);
+            if(size[0] < size[1]) rot+=90;
+            if(rot > 80) rot-=180;
+            if(rot < -100) rot+=180;
+            ctx.translate(pos[0], pos[1]);
+            ctx.rotate(rot*Math.PI/180);
+            ctx.font='18px Arial';
+            ctx.fillText(name,0,0, maxSize);
+            ctx.setTransform(1,0,0,1,0,0);
+
 
         };
 
@@ -73,17 +82,16 @@ angular.module('Pinya')
             rects = data;
             console.log(rects);
             firstDraw();
-            //canvas.onmousemove(0);
         });
 
         var firstDraw = function () {
             ctx.clearRect(0, 0, canvas.width, canvas.height); // for demo
-
             while(r = rects[i++]) {
+                ctx.beginPath();
                 drawRect(ctx, r.rect[0], r.rect[1], r.rect[2]);//ctx.rect(r.x, r.y, r.w, r.h);
                 ctx.fillStyle = "rgb("+cPosicio[r.pos[0]][0]+","+cPosicio[r.pos[0]][1]+","+cPosicio[r.pos[0]][2]+")";
                 ctx.fill();
-                drawName(ctx, r.rect[0], r.rect[2], r.pos[0])
+                drawName(ctx, r.rect[0], r.rect[1], r.rect[2], r.pos[0])
             }
 
         };
@@ -119,7 +127,7 @@ angular.module('Pinya')
 
                 ctx.fill();
 
-                drawName(ctx, r.rect[0], r.rect[2], r.pos[0])
+                drawName(ctx, r.rect[0], r.rect[1] ,r.rect[2], r.pos[0])
 
             }
 
