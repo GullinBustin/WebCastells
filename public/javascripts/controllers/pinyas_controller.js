@@ -158,8 +158,8 @@ angular.module('Pinya')
         var touchPos = function (key, val) {
             var pos = getAbsPosition(key, val);
 
-            //var span = document.getElementById('showPos');
-            //span.textContent = pos.pos+", "+pos.fila+", "+pos.cordo+", "+pos.costat;
+            var span = document.getElementById('showPos');
+            span.textContent = pos.pos+", "+pos.fila+", "+pos.cordo+", "+pos.costat;
 
             //controller.showPos = span.textContent;
 
@@ -217,8 +217,8 @@ angular.module('Pinya')
                 if (Math.abs(cPosicio[key][0] - p[0]) + Math.abs(cPosicio[key][1] - p[1]) + Math.abs(cPosicio[key][2] - p[2]) < 10) {
                     console.log(key);
                     var pos = getAbsPosition(key, [p[0], p[1], p[2]]);
-                    var span = document.getElementById('showPos');
-                    span.textContent = pos.pos+", "+pos.fila+", "+pos.cordo+", "+pos.costat;
+                    //var span = document.getElementById('showPos');
+                    //span.textContent = pos.pos+", "+pos.fila+", "+pos.cordo+", "+pos.costat;
                 }
             }
 
