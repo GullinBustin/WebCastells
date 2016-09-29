@@ -1,8 +1,8 @@
-<canvas ng-drop="true" ng-drop-success="PinyasCtrl.drop($data,$event)" id="pinyaCanvas" class="img-responsive" style="border: 1px solid black;"></canvas>
+<canvas ng-drop="true" width="1000" height="707" ng-drop-success="PinyasCtrl.drop($data,$event)" id="pinyaCanvas" class="img-responsive" style="border: 1px solid black;"></canvas>
 <span id="showPos"></span>
 
 <div ng-repeat="name in PinyasCtrl.men">
-    <div ng-drag="true" ng-drag-data="{name}" ng-drag-success="PinyasCtrl.drag($data, $event)">
+    <div ng-drag="true" ng-drag-data="{name}"   ng-drag-success="PinyasCtrl.drag($data, $event)">
         <h3>{{name}}</h3>
     </div>
 </div>

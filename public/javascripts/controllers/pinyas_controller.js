@@ -5,7 +5,7 @@
 'use strict';
 
 angular.module('Pinya')
-    .controller('PinyasController', ['$state',function($state){
+    .controller('PinyasController', ['$state', '$http',function($state, $http){
 
         var cPosicio = {
             "agulla": [0, 255, 255],
@@ -13,13 +13,9 @@ angular.module('Pinya')
             "contrafort": [255, 106, 0],
             "mans": [255, 216, 0],
             "crosses": [182, 255, 0],
-            "laterals": [127, 0, 110],
+            "lateral": [127, 0, 110],
             "vent": [0, 38, 255]
         };
-
-        var selectC = [0,255,0];
-
-        var passC = [0,0,0];
 
         var getAbsPosition = function(key, val){
           if(key == 'agulla'){
@@ -45,6 +41,21 @@ angular.module('Pinya')
           }
         };
 
+        var drawRect = function (ctx, pos, size, rot) {
+            ctx.translate(pos[0], pos[1]);
+            ctx.rotate(rot*Math.PI/180);
+            ctx.rect(-size[0]/2, -size[1]/2, size[0], size[1]);
+            ctx.setTransform(1,0,0,1,0,0);
+
+        };
+
+        var drawName = function (ctx, pos, rot, name) {
+
+            ctx.fillStyle="black";
+            ctx.fillText(name,pos[0], pos[1]);
+
+        };
+
         var controller = this;
 
         controller.showPos = "";
@@ -53,102 +64,62 @@ angular.module('Pinya')
 
         var ctx = canvas.getContext("2d");
 
-        var imageObj = new Image();
+        ctx.textAlign="center";
 
-        imageObj.onload = function() {
-            canvas.width = imageObj.width;
-            canvas.height = imageObj.height;
-            ctx.drawImage(imageObj, 0, 0);
+        var rects = [], i = 0, r;
+
+
+        $http.get('images/tres.json').success(function (data) {
+            rects = data;
+            console.log(rects);
+            firstDraw();
+            //canvas.onmousemove(0);
+        });
+
+        var firstDraw = function () {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // for demo
+
+            while(r = rects[i++]) {
+                drawRect(ctx, r.rect[0], r.rect[1], r.rect[2]);//ctx.rect(r.x, r.y, r.w, r.h);
+                ctx.fillStyle = "rgb("+cPosicio[r.pos[0]][0]+","+cPosicio[r.pos[0]][1]+","+cPosicio[r.pos[0]][2]+")";
+                ctx.fill();
+                drawName(ctx, r.rect[0], r.rect[2], r.pos[0])
+            }
+
         };
-        imageObj.src = 'images/newPinya3-lit.png';
 
-        var clickBool = false;
 
         canvas.onmousemove = function(e) {
 
-            if(!clickBool) {
-                // important: correct mouse position:
-                var rect = canvas.getBoundingClientRect(),
-                    x = e.clientX - rect.left,
-                    y = e.clientY - rect.top;
-
-                var realX = x / rect.width * canvas.width,
-                    realY = y / rect.height * canvas.height;
-
-                var p = ctx.getImageData(realX, realY, 1, 1).data;
-
-
-                if (p[0] == selectC[0] && p[1] == selectC[1] && p[2] == selectC[2]) {
-
-                } else {
-
-                    if (passC[0] != 0 || passC[1] != 0 || passC[2] != 0) {
-
-                        var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                        var data = imageData.data;
-
-                        for (var i = 0; i < data.length; i += 4) {
-                            if (data[i] == selectC[0] && data[i + 1] == selectC[1] && data[i + 2] == selectC[2]) {
-                                data[i] = passC[0];
-                                data[i + 1] = passC[1];
-                                data[i + 2] = passC[2];
-                            }
-                        }
-                        ctx.putImageData(imageData, 0, 0);
-
-                        passC = [0, 0, 0];
-                    }
-
-                    for (var key in cPosicio) {
-                        if (Math.abs(cPosicio[key][0] - p[0]) + Math.abs(cPosicio[key][1] - p[1]) + Math.abs(cPosicio[key][2] - p[2]) < 10) {
-                            touchPos(key, [p[0], p[1], p[2]]);
-                        }
-                    }
-
-                }
-            }
-        };
-
-        canvas.onmousedown = function(e){
             // important: correct mouse position:
-            var rect = canvas.getBoundingClientRect(),
+            var rect = this.getBoundingClientRect(),
                 x = e.clientX - rect.left,
-                y = e.clientY - rect.top;
+                y = e.clientY - rect.top,
+                i = 0, r;
 
-            var realX = x/rect.width * canvas.width,
-                realY = y/rect.height * canvas.height;
+            var realX = x / rect.width * canvas.width;
+            var realY = y / rect.height * canvas.height;
 
-            var p = ctx.getImageData(realX, realY, 1, 1).data;
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // for demo
 
+            while(r = rects[i++]) {
+                // add a single rect to path:
+                ctx.beginPath();
+                //ctx.rect(r.x, r.y, r.w, r.h);
+                drawRect(ctx, r.rect[0], r.rect[1], r.rect[2]);
 
-            if(p[0] == selectC[0] && p[1] == selectC[1] && p[2] == selectC[2]){
-                clickBool = true;
-            }else {
-
-                if(passC[0] != 0 || passC[1] != 0 || passC[2] != 0){
-
-                    var imageData = ctx.getImageData(0,0,canvas.width, canvas.height);
-                    var data = imageData.data;
-                    for (var i = 0; i < data.length; i += 4) {
-                        if(data[i] == selectC[0] && data[i+1] == selectC[1] && data[i+2] == selectC[2] ){
-                            data[i] = passC[0];
-                            data[i+1] = passC[1];
-                            data[i+2] = passC[2];
-                        }
-                    }
-                    ctx.putImageData(imageData, 0, 0);
-
-                    passC = [0,0,0];
+                // check if we hover it, fill red, if not fill it blue
+                if(ctx.isPointInPath(realX, realY)){
+                    ctx.fillStyle =  "green";
+                    var span = document.getElementById('showPos');
+                    span.textContent = r.pos;
+                }else{
+                    ctx.fillStyle = "rgb("+cPosicio[r.pos[0]][0]+","+cPosicio[r.pos[0]][1]+","+cPosicio[r.pos[0]][2]+")";
                 }
 
-                clickBool = false;
-                for (var key in cPosicio) {
-                    if (Math.abs(cPosicio[key][0] - p[0]) + Math.abs(cPosicio[key][1] - p[1]) + Math.abs(cPosicio[key][2] - p[2]) < 10) {
-                        touchPos(key, [p[0], p[1], p[2]]);
-                        clickBool = true;
+                ctx.fill();
 
-                    }
-                }
+                drawName(ctx, r.rect[0], r.rect[2], r.pos[0])
 
             }
 
@@ -174,9 +145,8 @@ angular.module('Pinya')
                 }
             }
             ctx.putImageData(imageData, 0, 0);
-            passC = val;
 
-        }
+        };
 
 
         controller.men = [
@@ -192,36 +162,7 @@ angular.module('Pinya')
         controller.drop = function(data,evt) {
             console.log("drop success, data:", data);
 
-            console.log(evt);
-            var rect = canvas.getBoundingClientRect(),
-                x = evt.event.clientX - rect.left,
-                y = evt.event.clientY - rect.top;
-            console.log(x);
-            console.log(y);
-
-            var realX = x / rect.width * canvas.width,
-                realY = y / rect.height * canvas.height;
-
-            //var p = passC;
-            var p = ctx.getImageData(realX, realY, 1, 1).data;
-
-            if(p[0] == selectC[0] && p[1] == selectC[1] && p[2] == selectC[2]){
-                p = passC;
-            }
-
-            //var span = document.getElementById('showPos');
-            //span.textContent = realX+"/"+realY;
-
-            for (var key in cPosicio){
-
-                if (Math.abs(cPosicio[key][0] - p[0]) + Math.abs(cPosicio[key][1] - p[1]) + Math.abs(cPosicio[key][2] - p[2]) < 10) {
-                    console.log(key);
-                    var pos = getAbsPosition(key, [p[0], p[1], p[2]]);
-                    //var span = document.getElementById('showPos');
-                    //span.textContent = pos.pos+", "+pos.fila+", "+pos.cordo+", "+pos.costat;
-                }
-            }
-
         };
+
 
     }]);
