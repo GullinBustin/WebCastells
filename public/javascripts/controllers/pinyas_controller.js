@@ -17,29 +17,6 @@ angular.module('Pinya')
             "vent": [0, 38, 255]
         };
 
-        var getAbsPosition = function(key, val){
-          if(key == 'agulla'){
-              return {pos: "agulla", fila: val[0]};
-          }
-          if(key == 'baix'){
-              return {pos: "baix", fila: val[2]};
-          }
-          if(key == "contrafort"){
-              return {pos: "contrafort", fila: val[2]};
-          }
-          if(key == "mans"){
-              return {pos: "mans", fila: val[2], cordo: val[1]-cPosicio[key][1]};
-          }
-          if(key == "crosses"){
-              return {pos: 'crosses', fila: val[2], costat: val[1]-cPosicio[key][1]};
-          }
-          if(key == "laterals"){
-              return {pos: 'laterals', fila: val[2]-cPosicio[key][2], costat: val[0]-cPosicio[key][0], cordo: val[1]};
-          }
-          if(key == "vent"){
-              return {pos : "vent", fila: val[1]-cPosicio[key][1], cordo: val[0]};
-          }
-        };
 
         var drawRect = function (ctx, pos, size, rot) {
             ctx.translate(pos[0], pos[1]);
@@ -91,7 +68,7 @@ angular.module('Pinya')
                 drawRect(ctx, r.rect[0], r.rect[1], r.rect[2]);//ctx.rect(r.x, r.y, r.w, r.h);
                 ctx.fillStyle = "rgb("+cPosicio[r.pos[0]][0]+","+cPosicio[r.pos[0]][1]+","+cPosicio[r.pos[0]][2]+")";
                 ctx.fill();
-                drawName(ctx, r.rect[0], r.rect[1], r.rect[2], r.pos[0])
+                drawName(ctx, r.rect[0], r.rect[1], r.rect[2], r.pos[0]);
             }
 
         };
@@ -113,7 +90,7 @@ angular.module('Pinya')
             while(r = rects[i++]) {
                 // add a single rect to path:
                 ctx.beginPath();
-                //ctx.rect(r.x, r.y, r.w, r.h);
+
                 drawRect(ctx, r.rect[0], r.rect[1], r.rect[2]);
 
                 // check if we hover it, fill red, if not fill it blue
@@ -127,7 +104,7 @@ angular.module('Pinya')
 
                 ctx.fill();
 
-                drawName(ctx, r.rect[0], r.rect[1] ,r.rect[2], r.pos[0])
+                drawName(ctx, r.rect[0], r.rect[1] ,r.rect[2], r.pos[0]);
 
             }
 
@@ -139,8 +116,6 @@ angular.module('Pinya')
 
             var span = document.getElementById('showPos');
             span.textContent = pos.pos+", "+pos.fila+", "+pos.cordo+", "+pos.costat;
-
-            //controller.showPos = span.textContent;
 
             var imageData = ctx.getImageData(0,0,canvas.width, canvas.height);
             var data = imageData.data;
@@ -165,6 +140,46 @@ angular.module('Pinya')
 
         controller.drag = function(data,evt) {
             console.log("drag success, data:", data);
+        };
+
+        controller.dragMove = function(data,evt) {
+            console.log("drag success, data:", data);
+
+
+            var rect = canvas.getBoundingClientRect(),
+                x = evt.event.clientX - rect.left,
+                y = evt.event.clientY - rect.top,
+                i = 0, r;
+
+            var realX = x / rect.width * canvas.width;
+            var realY = y / rect.height * canvas.height;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // for demo
+
+            while(r = rects[i++]) {
+                // add a single rect to path:
+                ctx.beginPath();
+
+                drawRect(ctx, r.rect[0], r.rect[1], r.rect[2]);
+
+                var name;
+
+                if(ctx.isPointInPath(realX, realY)){
+                    ctx.fillStyle =  "green";
+                    var span = document.getElementById('showPos');
+                    span.textContent = r.pos;
+                    name = data.name;
+                }else{
+                    ctx.fillStyle = "rgb("+cPosicio[r.pos[0]][0]+","+cPosicio[r.pos[0]][1]+","+cPosicio[r.pos[0]][2]+")";
+                    name = r.pos[0];
+                }
+
+                ctx.fill();
+
+                drawName(ctx, r.rect[0], r.rect[1] ,r.rect[2], name);
+
+            }
+
         };
 
         controller.drop = function(data,evt) {
