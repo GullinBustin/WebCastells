@@ -25,7 +25,21 @@ angular.module('Pinya')
 
         $http.get('images/tres.json').success(function (data) {
             store.pinyaTresRect = data;
+
             for (var key in data){
+                var tempPos = data[key]["pos"];
+                var newKey;
+                if(tempPos.length == 2){
+                    newKey = tempPos[0]+"_"+tempPos[1];
+                }
+                if(tempPos.length == 3){
+                    newKey = tempPos[0]+"_"+tempPos[1]+"_"+tempPos[2];
+                }
+                if(tempPos.length == 4){
+                    newKey = tempPos[0]+"_"+tempPos[1]+"_"+tempPos[2]+"_"+tempPos[3];
+                }
+                store.pinyaTresName[newKey] = "";
+                /*
                 var temp = data[key]["pos"];
 
                 var obj = store.pinyaTresName;
@@ -42,7 +56,9 @@ angular.module('Pinya')
                     }
                     obj = obj[temp[i]];
                 }
+                */
             }
+
             console.log(store.pinyaTresName);
             notifyObservers();
         });

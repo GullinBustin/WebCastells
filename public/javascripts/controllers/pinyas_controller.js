@@ -47,6 +47,18 @@ angular.module('Pinya')
         };
 
         var getName = function (pos) {
+            var newKey;
+            if(pos.length == 2){
+                newKey = pos[0]+"_"+pos[1];
+            }
+            if(pos.length == 3){
+                newKey = pos[0]+"_"+pos[1]+"_"+pos[2];
+            }
+            if(pos.length == 4){
+                newKey = pos[0]+"_"+pos[1]+"_"+pos[2]+"_"+pos[3];
+            }
+            return controller.pinyas.pinyaTresName[newKey];
+            /*
             if(pos.length == 2){
                 return controller.pinyas.pinyaTresName[pos[0]][pos[1]];
             }
@@ -56,9 +68,23 @@ angular.module('Pinya')
             if(pos.length == 4){
                 return controller.pinyas.pinyaTresName[pos[0]][pos[1]][pos[2]][pos[3]];
             }
+            */
         };
 
         var setName = function (pos, name) {
+            var newKey;
+            if(pos.length == 2){
+                newKey = pos[0]+"_"+pos[1];
+            }
+            if(pos.length == 3){
+                newKey = pos[0]+"_"+pos[1]+"_"+pos[2];
+            }
+            if(pos.length == 4){
+                newKey = pos[0]+"_"+pos[1]+"_"+pos[2]+"_"+pos[3];
+            }
+            controller.pinyas.pinyaTresName[newKey] = name;
+
+            /*
             if(pos.length == 2){
                 controller.pinyas.pinyaTresName[pos[0]][pos[1]] = name;
             }
@@ -68,6 +94,7 @@ angular.module('Pinya')
             if(pos.length == 4){
                 controller.pinyas.pinyaTresName[pos[0]][pos[1]][pos[2]][pos[3]] = name;
             }
+            */
         };
 
         var canvas = document.getElementById('pinyaCanvas');
@@ -200,6 +227,7 @@ angular.module('Pinya')
                 y = e.clientY - rect.top,
                 i = 0, r;
 
+
             var realX = x / rect.width * canvas.width;
             var realY = y / rect.height * canvas.height;
 
@@ -234,8 +262,49 @@ angular.module('Pinya')
         };
 
         canvas.onmouseup = function (e) {
+
             if(isMouseDraged){
                 console.log(nItemSelected);
+
+                var rect = this.getBoundingClientRect(),
+                    x = e.clientX - rect.left,
+                    y = e.clientY - rect.top,
+                    i = 0, r;
+
+                var realX = x / rect.width * canvas.width;
+                var realY = y / rect.height * canvas.height;
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height); // for demo
+
+                while(r = controller.pinyas.pinyaTresRect[i++]) {
+                    // add a single rect to path:
+                    ctx.beginPath();
+
+                    drawRect(ctx, r.rect[0], r.rect[1], r.rect[2]);
+
+                    // check if we hover it, fill red, if not fill it blue
+
+                    if(ctx.isPointInPath(realX, realY)){
+                        ctx.fillStyle =  "rgb(0,255,0)";
+                        var span = document.getElementById('showPos');
+                        span.textContent = r.pos;
+
+                        var tname1 = getName(r.pos);
+                        var tname2 = getName(controller.pinyas.pinyaTresRect[nItemSelected].pos);
+
+                        setName(r.pos, tname2);
+                        setName(controller.pinyas.pinyaTresRect[nItemSelected].pos, tname1);
+
+                    }else{
+                        ctx.fillStyle = "rgb("+cPosicio[r.pos[0]][0]+","+cPosicio[r.pos[0]][1]+","+cPosicio[r.pos[0]][2]+")";
+                    }
+
+                    ctx.fill();
+
+                    drawName(ctx, r.rect[0], r.rect[1] ,r.rect[2], getName(r.pos));
+
+                }
+
                 isMousePressed = false;
                 isMouseDraged = false;
                 isItemSelected = false;
@@ -257,9 +326,22 @@ angular.module('Pinya')
 
         controller.dragMove = function(data,evt) {
 
+            var eventX = 0, eventY = 0;
+
+            if(evt.event.constructor == MouseEvent){
+                eventX = evt.event.clientX;
+                eventY = evt.event.clientY;
+            }
+            if(evt.event.constructor == TouchEvent){
+                eventX = evt.event.changedTouches[0].clientX;
+                eventY = evt.event.changedTouches[0].clientY;
+            }
+
             var rect = canvas.getBoundingClientRect(),
-                x = evt.event.clientX - rect.left,
-                y = evt.event.clientY - rect.top,
+                //x = evt.event.clientX - rect.left,
+                //y = evt.event.clientY - rect.top,
+                x = eventX - rect.left,
+                y = eventY - rect.top,
                 i = 0, r;
 
             var realX = x / rect.width * canvas.width;
@@ -294,16 +376,30 @@ angular.module('Pinya')
         };
 
         controller.drop = function(data,evt) {
-            console.log("drop success, data:", data);
 
+            var eventX = 0, eventY = 0;
+
+            if(evt.event.constructor == MouseEvent){
+                eventX = evt.event.clientX;
+                eventY = evt.event.clientY;
+            }
+            if(evt.event.constructor == TouchEvent){
+                eventX = evt.event.changedTouches[0].clientX;
+                eventY = evt.event.changedTouches[0].clientY;
+            }
 
             var rect = canvas.getBoundingClientRect(),
-                x = evt.event.clientX - rect.left,
-                y = evt.event.clientY - rect.top,
+                //x = evt.event.clientX - rect.left,
+                //y = evt.event.clientY - rect.top,
+                x = eventX - rect.left,
+                y = eventY - rect.top,
                 i = 0, r;
+
+            console.log(evt);
 
             var realX = x / rect.width * canvas.width;
             var realY = y / rect.height * canvas.height;
+
 
             ctx.clearRect(0, 0, canvas.width, canvas.height); // for demo
 
