@@ -1,8 +1,28 @@
-<canvas ng-drop="true" width="1000" height="707"  ng-drag-move="PinyasCtrl.dragMove($data, $event)"   ng-drop-success="PinyasCtrl.drop($data,$event)" id="pinyaCanvas" class="img-responsive" style="border: 1px solid black;"></canvas>
-<span id="showPos"></span>
+<div class="col-xs-10">
+    <canvas ng-click="" ng-drop="true" width="1000" height="707"  ng-drag-move="PinyasCtrl.dragMove($data, $event)" ng-drop-success="PinyasCtrl.drop($data,$event)" id="pinyaCanvas" class="img-responsive" style="border: 1px solid black;"></canvas>
+</div>
+<span id="showPos"></span><br>
 
-<div ng-repeat="name in PinyasCtrl.men">
-    <div ng-drag="true" ng-drag-data="{name}"  ng-drag-success="PinyasCtrl.drag($data, $event)">
-        <h3>{{name}}</h3>
-    </div>
+
+<div class="col-xs-2 table-responsive" >
+    <label>Search: <input ng-model="searchText"></label>
+    <table id="pinyerosTable" ng-show="searchText" class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Nom</th>
+            </tr>
+        </thead>
+        <tbody style="height: 300px;">
+            <tr ng-repeat="pinyero in PinyasCtrl.pinyas.pinyeros | filter:{'name' : searchText}">
+                <td ng-show="!pinyero.chosed" ng-class="{selected : PinyasCtrl.nameSelected == pinyero.name}" ng-drag="true" ng-drag-data="pinyero" ng-drag-success="PinyasCtrl.drag($data, $event);" ng-click="PinyasCtrl.selectItem(pinyero)" >
+                    {{pinyero.name}}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+
+<div ng-drag-clone="" >
+    <h3>{{clonedData.name}}</h3>
 </div>

@@ -8,6 +8,7 @@ angular.module('Pinya')
     .service('PinyasService', function ($http) {
         var store = this;
 
+        store.pinyeros = [];
         store.pinyaTresRect = [];
         store.pinyaTresName = {};
 
@@ -59,9 +60,13 @@ angular.module('Pinya')
                 */
             }
 
-            console.log(store.pinyaTresName);
             notifyObservers();
         });
 
+        $http.get('pinyas/pinyeros').success(function (data) {
+            for (var key in data){
+                store.pinyeros[key] = {"name": data[key].name, "chosed": false};
+            }
+        });
 
     });

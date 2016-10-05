@@ -6,3 +6,33 @@ body {
 a {
   color: #00B7FF;
 }
+
+.selected {
+    background-color: #00ff00;
+}
+
+
+[ng-drag].dragging {
+  opacity: 0;
+}
+
+[ng-drag-clone]{
+    margin: 0;
+}
+
+thead, tbody, tr, td, th { display: block; }
+
+tr:after {
+  content: ' ';
+  display: block;
+  visibility: hidden;
+  clear: both;
+}
+
+tbody {
+  overflow-y: auto;
+}
+
+thead {
+  /* fallback */
+}

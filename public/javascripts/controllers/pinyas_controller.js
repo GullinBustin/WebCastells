@@ -103,9 +103,9 @@ angular.module('Pinya')
 
         ctx.textAlign="center";
 
-        var  i = 0, r;
 
         controller.firstDraw = function () {
+            var  i = 0, r;
             ctx.clearRect(0, 0, canvas.width, canvas.height); // for demo
             while(r = controller.pinyas.pinyaTresRect[i++]) {
                 ctx.beginPath();
@@ -119,7 +119,6 @@ angular.module('Pinya')
 
         if( controller.pinyas.pinyaTresRect.length == 0){
             controller.pinyas.registerObserverCallback(controller.firstDraw);
-            console.log("entra");
 
         }else{
             controller.firstDraw();
@@ -129,10 +128,10 @@ angular.module('Pinya')
         var isMouseDraged = false;
         var isItemSelected = false;
         var nItemSelected = -1;
+        controller.nameSelected = null;
 
 
         canvas.onmousemove = function(e) {
-
             // important: correct mouse position:
             if(!isMousePressed && !isItemSelected) {
                 var rect = this.getBoundingClientRect(),
@@ -140,8 +139,8 @@ angular.module('Pinya')
                     y = e.clientY - rect.top,
                     i = 0, r;
 
-                var realX = x / rect.width * canvas.width;
-                var realY = y / rect.height * canvas.height;
+                var realX = Math.round(x / rect.width * canvas.width);
+                var realY = Math.round(y / rect.height * canvas.height);
 
                 ctx.clearRect(0, 0, canvas.width, canvas.height); // for demo
 
@@ -233,7 +232,10 @@ angular.module('Pinya')
 
             ctx.clearRect(0, 0, canvas.width, canvas.height); // for demo
 
-            isItemSelected = false;
+            var nowIsPressed = false;
+            var nowIsSelected = false;
+
+            var reDraw = false;
 
             while(r = controller.pinyas.pinyaTresRect[i++]) {
                 // add a single rect to path:
@@ -244,21 +246,70 @@ angular.module('Pinya')
                 // check if we hover it, fill red, if not fill it blue
 
                 if(ctx.isPointInPath(realX, realY)){
-                    ctx.fillStyle =  "rgb(0,255,0)";
-                    var span = document.getElementById('showPos');
-                    span.textContent = r.pos;
-                    isMousePressed = true;
-                    isItemSelected = true;
-                    nItemSelected = i-1;
+
+                    if(controller.nameSelected == null) {
+
+                        if (isItemSelected) {
+                            ctx.fillStyle = "rgb("+cPosicio[r.pos[0]][0]+","+cPosicio[r.pos[0]][1]+","+cPosicio[r.pos[0]][2]+")";
+
+                            var tname1 = getName(r.pos);
+                            var tname2 = getName(controller.pinyas.pinyaTresRect[nItemSelected].pos);
+
+                            setName(r.pos, tname2);
+                            setName(controller.pinyas.pinyaTresRect[nItemSelected].pos, tname1);
+                            ctx.fillStyle = "rgb(0,255,0)";
+                            var span = document.getElementById('showPos');
+                            span.textContent = r.pos;
+                            nowIsPressed = false;
+                            nowIsSelected = false;
+                            nItemSelected = -1;
+                            reDraw = true;
+                        } else {
+                            ctx.fillStyle = "rgb(0,255,0)";
+                            var span = document.getElementById('showPos');
+                            span.textContent = r.pos;
+                            nowIsPressed = true;
+                            nowIsSelected = true;
+                            nItemSelected = i - 1;
+                        }
+                    }else{
+
+                        ctx.fillStyle = "rgb("+cPosicio[r.pos[0]][0]+","+cPosicio[r.pos[0]][1]+","+cPosicio[r.pos[0]][2]+")";
+
+                        for(var key in controller.pinyas.pinyeros){
+                            if(controller.pinyas.pinyeros[key].name == controller.nameSelected){
+                                controller.pinyas.pinyeros[key].chosed = true;
+                            }
+                        }
+
+                        name = controller.nameSelected;
+
+                        for(var key in controller.pinyas.pinyeros){
+                            if(controller.pinyas.pinyeros[key].name == getName(r.pos)){
+                                controller.pinyas.pinyeros[key].chosed = false;
+                            }
+                        }
+
+                        setName(r.pos, name);
+
+                    }
                 }else{
                     ctx.fillStyle = "rgb("+cPosicio[r.pos[0]][0]+","+cPosicio[r.pos[0]][1]+","+cPosicio[r.pos[0]][2]+")";
                 }
+
 
                 ctx.fill();
 
                 drawName(ctx, r.rect[0], r.rect[1] ,r.rect[2], getName(r.pos));
 
             }
+
+            isMousePressed = nowIsPressed;
+            isItemSelected = nowIsSelected;
+            controller.nameSelected = null;
+
+            if(reDraw) controller.firstDraw();
+
         };
 
         canvas.onmouseup = function (e) {
@@ -314,11 +365,7 @@ angular.module('Pinya')
             }
         };
 
-        controller.men = [
-            "luis",
-            "jose luis",
-            "mega luis"
-        ];
+
 
         controller.drag = function(data,evt) {
             console.log("drag success, data:", data);
@@ -370,7 +417,6 @@ angular.module('Pinya')
                 ctx.fill();
 
                 drawName(ctx, r.rect[0], r.rect[1] ,r.rect[2], name);
-
             }
 
         };
@@ -395,8 +441,6 @@ angular.module('Pinya')
                 y = eventY - rect.top,
                 i = 0, r;
 
-            console.log(evt);
-
             var realX = x / rect.width * canvas.width;
             var realY = y / rect.height * canvas.height;
 
@@ -416,6 +460,15 @@ angular.module('Pinya')
                     var span = document.getElementById('showPos');
                     span.textContent = r.pos;
                     name = data.name;
+
+                    data.chosed = true;
+
+                    for(var key in controller.pinyas.pinyeros){
+                        if(controller.pinyas.pinyeros[key].name == getName(r.pos)){
+                            controller.pinyas.pinyeros[key].chosed = false;
+                        }
+                    }
+
                     setName(r.pos, name);
                 }else{
                     ctx.fillStyle = "rgb("+cPosicio[r.pos[0]][0]+","+cPosicio[r.pos[0]][1]+","+cPosicio[r.pos[0]][2]+")";
@@ -428,8 +481,30 @@ angular.module('Pinya')
 
             }
 
-
         };
 
+
+        controller.selectItem = function (item) {
+            if(isItemSelected){
+
+                for(var key in controller.pinyas.pinyeros){
+                    if(controller.pinyas.pinyeros[key].name == getName(controller.pinyas.pinyaTresRect[nItemSelected].pos)){
+                        controller.pinyas.pinyeros[key].chosed = false;
+                    }
+                }
+
+                setName(controller.pinyas.pinyaTresRect[nItemSelected].pos, item.name);
+                isItemSelected = false;
+                nItemSelected = -1;
+                item.chosed = true;
+
+                controller.firstDraw();
+            }else{
+
+                controller.nameSelected = item.name;
+
+            }
+
+        }
 
     }]);
