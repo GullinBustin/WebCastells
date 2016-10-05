@@ -33,7 +33,7 @@ angular.module('Pinya')
         var drawName = function (ctx, pos, size ,rot, name) {
 
             ctx.fillStyle="black";
-            var maxSize = Math.max(size[0] , size[1]);
+            var maxSize = Math.max(size[0] , size[1])*9/10;
             if(size[0] < size[1]) rot+=90;
             if(rot > 80) rot-=180;
             if(rot < -100) rot+=180;
@@ -144,6 +144,7 @@ angular.module('Pinya')
 
                 ctx.clearRect(0, 0, canvas.width, canvas.height); // for demo
 
+                var onlyOne = true;
                 while (r = controller.pinyas.pinyaTresRect[i++]) {
                     // add a single rect to path:
                     ctx.beginPath();
@@ -151,10 +152,11 @@ angular.module('Pinya')
                     drawRect(ctx, r.rect[0], r.rect[1], r.rect[2]);
 
                     // check if we hover it, fill red, if not fill it blue
-                    if (ctx.isPointInPath(realX, realY)) {
+                    if (ctx.isPointInPath(realX, realY) && onlyOne) {
                         ctx.fillStyle = "rgb(0,255,0)";
                         var span = document.getElementById('showPos');
                         span.textContent = r.pos;
+                        onlyOne = false;
                     } else {
                         ctx.fillStyle = "rgb(" + cPosicio[r.pos[0]][0] + "," + cPosicio[r.pos[0]][1] + "," + cPosicio[r.pos[0]][2] + ")";
                     }
@@ -237,6 +239,7 @@ angular.module('Pinya')
 
             var reDraw = false;
 
+            var onlyOne = true;
             while(r = controller.pinyas.pinyaTresRect[i++]) {
                 // add a single rect to path:
                 ctx.beginPath();
@@ -245,7 +248,7 @@ angular.module('Pinya')
 
                 // check if we hover it, fill red, if not fill it blue
 
-                if(ctx.isPointInPath(realX, realY)){
+                if(ctx.isPointInPath(realX, realY) && onlyOne){
 
                     if(controller.nameSelected == null) {
 
@@ -293,6 +296,7 @@ angular.module('Pinya')
                         setName(r.pos, name);
 
                     }
+                    onlyOne = false;
                 }else{
                     ctx.fillStyle = "rgb("+cPosicio[r.pos[0]][0]+","+cPosicio[r.pos[0]][1]+","+cPosicio[r.pos[0]][2]+")";
                 }
@@ -327,6 +331,7 @@ angular.module('Pinya')
 
                 ctx.clearRect(0, 0, canvas.width, canvas.height); // for demo
 
+                var onlyOne = true;
                 while(r = controller.pinyas.pinyaTresRect[i++]) {
                     // add a single rect to path:
                     ctx.beginPath();
@@ -335,7 +340,7 @@ angular.module('Pinya')
 
                     // check if we hover it, fill red, if not fill it blue
 
-                    if(ctx.isPointInPath(realX, realY)){
+                    if(ctx.isPointInPath(realX, realY) && onlyOne){
                         ctx.fillStyle =  "rgb(0,255,0)";
                         var span = document.getElementById('showPos');
                         span.textContent = r.pos;
@@ -346,6 +351,7 @@ angular.module('Pinya')
                         setName(r.pos, tname2);
                         setName(controller.pinyas.pinyaTresRect[nItemSelected].pos, tname1);
 
+                        onlyOne = false;
                     }else{
                         ctx.fillStyle = "rgb("+cPosicio[r.pos[0]][0]+","+cPosicio[r.pos[0]][1]+","+cPosicio[r.pos[0]][2]+")";
                     }
@@ -396,6 +402,7 @@ angular.module('Pinya')
 
             ctx.clearRect(0, 0, canvas.width, canvas.height); // for demo
 
+            var onlyOne = true;
             while(r = controller.pinyas.pinyaTresRect[i++]) {
                 // add a single rect to path:
                 ctx.beginPath();
@@ -404,11 +411,12 @@ angular.module('Pinya')
 
                 var name;
 
-                if(ctx.isPointInPath(realX, realY)){
+                if(ctx.isPointInPath(realX, realY) && onlyOne){
                     ctx.fillStyle =  "rgb(0,255,0)";
                     var span = document.getElementById('showPos');
                     span.textContent = r.pos;
                     name = data.name;
+                    onlyOne = false;
                 }else{
                     ctx.fillStyle = "rgb("+cPosicio[r.pos[0]][0]+","+cPosicio[r.pos[0]][1]+","+cPosicio[r.pos[0]][2]+")";
                     name = getName(r.pos);
@@ -447,6 +455,7 @@ angular.module('Pinya')
 
             ctx.clearRect(0, 0, canvas.width, canvas.height); // for demo
 
+            var onlyOne = true;
             while(r = controller.pinyas.pinyaTresRect[i++]) {
                 // add a single rect to path:
                 ctx.beginPath();
@@ -455,7 +464,7 @@ angular.module('Pinya')
 
                 var name;
 
-                if(ctx.isPointInPath(realX, realY)){
+                if(ctx.isPointInPath(realX, realY) && onlyOne){
                     ctx.fillStyle =  "rgb(0,255,0)";
                     var span = document.getElementById('showPos');
                     span.textContent = r.pos;
@@ -470,6 +479,7 @@ angular.module('Pinya')
                     }
 
                     setName(r.pos, name);
+                    onlyOne = false;
                 }else{
                     ctx.fillStyle = "rgb("+cPosicio[r.pos[0]][0]+","+cPosicio[r.pos[0]][1]+","+cPosicio[r.pos[0]][2]+")";
                     name = getName(r.pos);
