@@ -1,0 +1,14 @@
+[
+  {"pos":"contrafort" ,"cordo": "0", "rengles" : 3},
+  {"pos":"crosses" ,"cordo": "0", "rengles" : 3},
+  {"pos":"mans" ,"cordo": "0", "rengles" : 3},
+  {"pos":"vent" ,"cordo": "0", "rengles" : 3},
+  {"pos":"mans" ,"cordo": "1", "rengles" : 3},
+  {"pos":"vent" ,"cordo": "1", "rengles" : 3},
+  {"pos":"mans" ,"cordo": "2", "rengles" : 3},
+  {"pos":"vent" ,"cordo": "2", "rengles" : 3},
+  {"pos":"lateral" ,"cordo": "0", "rengles" : 3},
+  {"pos":"lateral" ,"cordo": "1", "rengles" : 3},
+  {"pos":"agulla" ,"cordo": "0", "rengles" : 3},
+  {"pos":"lateral" ,"cordo": "2", "rengles" : 3}
+]

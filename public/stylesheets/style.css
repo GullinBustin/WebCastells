@@ -36,3 +36,7 @@ tbody {
 thead {
   /* fallback */
 }
+
+tbody.pinyeros tr:hover{
+  background-color: #28a4c9;
+}

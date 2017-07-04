@@ -142,7 +142,7 @@ angular.module('Pinya')
                 var realX = Math.round(x / rect.width * canvas.width);
                 var realY = Math.round(y / rect.height * canvas.height);
 
-                ctx.clearRect(0, 0, canvas.width, canvas.height); // for demo
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
 
                 var onlyOne = true;
                 while (r = controller.pinyas.pinyaTresRect[i++]) {
@@ -153,7 +153,7 @@ angular.module('Pinya')
 
                     // check if we hover it, fill red, if not fill it blue
                     if (ctx.isPointInPath(realX, realY) && onlyOne) {
-                        ctx.fillStyle = "rgb(0,255,0)";
+                        ctx.fillStyle = "rgb(100,100,100)";
                         var span = document.getElementById('showPos');
                         span.textContent = r.pos;
                         onlyOne = false;
@@ -179,7 +179,7 @@ angular.module('Pinya')
                     var realX = x / rect.width * canvas.width;
                     var realY = y / rect.height * canvas.height;
 
-                    ctx.clearRect(0, 0, canvas.width, canvas.height); // for demo
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
                     var booleanName = true;
 
@@ -232,7 +232,7 @@ angular.module('Pinya')
             var realX = x / rect.width * canvas.width;
             var realY = y / rect.height * canvas.height;
 
-            ctx.clearRect(0, 0, canvas.width, canvas.height); // for demo
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             var nowIsPressed = false;
             var nowIsSelected = false;
@@ -285,7 +285,7 @@ angular.module('Pinya')
                             }
                         }
 
-                        name = controller.nameSelected;
+                        var name = controller.nameSelected;
 
                         for(var key in controller.pinyas.pinyeros){
                             if(controller.pinyas.pinyeros[key].name == getName(r.pos)){
@@ -515,6 +515,10 @@ angular.module('Pinya')
 
             }
 
-        }
+        };
+
+        controller.generatePinya = function(){
+            controller.pinyas.generatePinyaTres(controller.firstDraw);
+        };
 
     }]);

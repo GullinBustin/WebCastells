@@ -63,6 +63,33 @@ angular.module('Pinya')
             notifyObservers();
         });
 
+        this.generatePinyaTres = function(callback){
+
+            for (var key in store.pinyeros) {
+                store.pinyeros[key].chosed = false;
+            }
+
+            $http.get('pinyas/generatePinya3').success(function (data) {
+
+                for (var i in data) {
+
+                    var tempPos = data[i];
+
+                    for (var key in store.pinyeros) {
+                        if (store.pinyeros[key].name == tempPos.name) {
+                            store.pinyeros[key].chosed = true;
+                        }
+                    }
+
+                    var newKey = tempPos.pos.join('_');
+
+                    store.pinyaTresName[newKey] = tempPos.name;
+
+                }
+                callback();
+            });
+        };
+
         $http.get('pinyas/pinyeros').success(function (data) {
             for (var key in data){
                 store.pinyeros[key] = {"name": data[key].name, "chosed": false};
