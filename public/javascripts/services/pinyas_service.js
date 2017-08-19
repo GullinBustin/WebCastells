@@ -71,9 +71,9 @@ angular.module('Pinya')
 
             $http.get('pinyas/generatePinya3').success(function (data) {
 
-                for (var i in data) {
+                for (var i in data["data"]) {
 
-                    var tempPos = data[i];
+                    var tempPos = data["data"][i];
 
                     for (var key in store.pinyeros) {
                         if (store.pinyeros[key].name == tempPos.name) {
@@ -91,8 +91,8 @@ angular.module('Pinya')
         };
 
         $http.get('pinyas/pinyeros').success(function (data) {
-            for (var key in data){
-                store.pinyeros[key] = {"name": data[key].name, "chosed": false};
+            for (var key in data["data"]){
+                store.pinyeros[key] = {"name": data["data"][key].name, "chosed": false};
             }
         });
 

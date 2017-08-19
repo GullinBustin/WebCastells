@@ -8,6 +8,7 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var pinyas = require('./routes/pinyas');
+var files = require('./routes/files')
 
 var mongoConfig = require('./services/mongoConfig');
 
@@ -28,6 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //app.use('/', routes);
 app.use('/users', users);
 app.use('/pinyas', pinyas);
+app.use('/files', files);
 
 mongoConfig();
 

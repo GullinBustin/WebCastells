@@ -11,7 +11,7 @@ router.get('/pinyeros', function(req, res, next) {
     var collection = db.collection('pinyeros');
 
     collection.find({},{"_id" : false , "name": true}).toArray( function (err, data) {
-        res.send(data);
+        res.send({data:data});
     });
 
 });
@@ -43,7 +43,7 @@ router.get('/getPinyerosByPos', function(req, res, next) {
         ];
 
         var fData = filtrarBy(data, necessary , condition);
-        res.send(fData);
+        res.send({data:fData});
     });
 
 });
@@ -307,7 +307,7 @@ router.get('/generatePinya3', function (req, res, next) {
 
             }
 
-            res.send(message);
+            res.send({data:message});
         });
     });
 
